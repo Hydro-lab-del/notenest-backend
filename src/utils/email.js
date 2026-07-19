@@ -14,7 +14,7 @@ export async function sendEmail(to, subject, html) {
     const transportOptions = {
         host,
         port,
-        secure: false, // Must be false for port 587 (STARTTLS)
+        secure: port === 465, // True for 465, false for 587
         auth: {
             user,
             pass
