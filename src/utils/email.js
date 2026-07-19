@@ -13,13 +13,16 @@ export async function sendEmail(to, subject, html) {
     if (host && host.toLowerCase().includes('brevo')) {
         console.log(`[Email] Sending via Brevo REST API to ${to}...`);
         try {
+            const apiKey = (process.env.BREVO_API_KEY || pass || '').trim();
+            if (!apiKey.startsWith('xkeysib-')) {
+                console.warn('[Email] WARNING: The Brevo API key does not start with "xkeysib-". It might be an invalid or SMTP-only key.');
+            }
+
             const response = await fetch('https://api.brevo.com/v3/smtp/email', {
                 method: 'POST',
                 headers: {
                     'accept': 'application/json',
-                    // Often the Brevo SMTP password acts as the API key. 
-                    // If not, users can explicitly set BREVO_API_KEY.
-                    'api-key': process.env.BREVO_API_KEY || pass,
+                    'api-key': apiKey,
                     'content-type': 'application/json'
                 },
                 body: JSON.stringify({
