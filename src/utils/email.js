@@ -1,7 +1,6 @@
 import nodemailer from 'nodemailer';
 
 export async function sendEmail(to, subject, html) {
-
     const host = process.env.SMTP_HOST?.trim();
     const port = Number(process.env.SMTP_PORT);
     const user = process.env.SMTP_USER?.trim();
@@ -10,38 +9,64 @@ export async function sendEmail(to, subject, html) {
     const senderEmail = process.env.SENDER_EMAIL?.trim();
     const from = `"${fromName}" <${senderEmail}>`; 
 
-    
+    // 1. BREVO REST API (Bypasses Render SMTP Timeouts on port 465/587)
+    if (host && host.toLowerCase().includes('brevo')) {
+        console.log(`[Email] Sending via Brevo REST API to ${to}...`);
+        try {
+            const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+                method: 'POST',
+                headers: {
+                    'accept': 'application/json',
+                    // Often the Brevo SMTP password acts as the API key. 
+                    // If not, users can explicitly set BREVO_API_KEY.
+                    'api-key': process.env.BREVO_API_KEY || pass,
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    sender: { name: fromName, email: senderEmail },
+                    to: [{ email: to }],
+                    subject: subject,
+                    htmlContent: html
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.text();
+                throw new Error(`Brevo API Error: ${response.status} - ${errorData}`);
+            }
+
+            console.log(`[Email] Email sent successfully via Brevo REST API!`);
+            return await response.json();
+        } catch (error) {
+            console.error(`[Email] Error sending via Brevo API:`, error);
+            throw error;
+        }
+    }
+
+    // 2. STANDARD SMTP FALLBACK (For Gmail, SendGrid, etc.)
     const transportOptions = {
         host,
         port,
-        secure: port === 465, // True for 465, false for 587
+        secure: port === 465,
         auth: {
             user,
             pass
         },
-        authMethod: 'PLAIN', // Forces Nodemailer to avoid picking conflicting MD5 handshake sequences
+        authMethod: 'PLAIN',
         tls: {
-            rejectUnauthorized: false // Prevents local Windows network/firewall policies from blocking the handshake
+            rejectUnauthorized: false
         }
     };
 
     const transporter = nodemailer.createTransport(transportOptions);
 
-    // 3. ATTEMPTING EXECUTION
     try {
-        console.log(`[Email] Sending email to ${to} with subject "${subject}"...`);
-
-        const info = await transporter.sendMail({
-            from,
-            to,
-            subject,
-            html
-        });
-
-        console.log(`[Email] Email sent successfully: ${info.messageId}`);
+        console.log(`[Email] Sending email to ${to} via SMTP...`);
+        const info = await transporter.sendMail({ from, to, subject, html });
+        console.log(`[Email] Email sent successfully via SMTP: ${info.messageId}`);
         return info;
     } catch (error) {
-        console.error(`[Email] Error sending email to ${to}:`, error);
+        console.error(`[Email] Error sending email via SMTP:`, error);
         throw error;
     }
 }
