@@ -20,9 +20,6 @@ app.use(
 );
 
 
-app.get('/api/status', (req, res) => {
-  res.status(200).json({ status: 'alive' });
-});
 
 app.get('/health', (req, res) => {
     res.json({ status: 'ok' });
