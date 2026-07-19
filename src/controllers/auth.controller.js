@@ -51,14 +51,18 @@ const registerUser = asyncHandler(async (req, res) => {
 
   await sendEmail(
     newlyCreatedUser.email,
-    "Verify Your Email",
+    "Verify Your NoteNest Account",
     `
-        <h1>Email Verification</h1>
-        <p>Please verify your email by clicking the link below:</p>
-        <p><a href="${verifyUrl}" style="padding: 10px 20px; background-color: black; color: white; text-decoration: none; border-radius: 5px;">Verify Email</a></p>
-        <p><strong>Note:</strong> This link will expire in 15 minutes.</p>
-        <p>If you didn't request this, you can safely ignore this email.</p>
-    `,
+    <div style="font-family: 'Inter', Helvetica, Arial, sans-serif; background-color: #f9fafb; padding: 40px 20px; color: #111827;">
+      <div style="margin: 0 auto; background-color: #ffffff; border-radius: 16px; padding: 40px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); text-align: center; max-width: 500px;">
+          <h1 style="font-size: 24px; font-weight: 700; margin-bottom: 16px; color: #000;">Verify your email</h1>
+          <p style="font-size: 16px; color: #4b5563; margin-bottom: 32px; line-height: 1.5;">Welcome to NoteNest! Please confirm your email address to get started.</p>
+          <a href="${verifyUrl}" style="display: inline-block; padding: 12px 32px; background-color: #000000; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; letter-spacing: 0.5px;">Verify Email</a>
+          <p style="font-size: 14px; color: #9ca3af; margin-top: 32px; margin-bottom: 0;">This link will expire in 15 minutes.</p>
+          <p style="font-size: 12px; color: #9ca3af; margin-top: 8px;">If you didn't create an account, you can safely ignore this email.</p>
+      </div>
+    </div>
+    `
   );
 
   const user = {
@@ -90,14 +94,18 @@ const resendVerificationEmail = asyncHandler(async (req, res) => {
 
   await sendEmail(
     user.email,
-    "Verify Your Email",
+    "Verify Your NoteNest Account",
     `
-        <h1>Email Verification</h1>
-        <p>Please verify your email by clicking the link below:</p>
-        <p><a href="${verifyUrl}" style="padding: 10px 20px; background-color: black; color: white; text-decoration: none; border-radius: 5px;">Verify Email</a></p>
-        <p><strong>Note:</strong> This link will expire in 15 minutes.</p>
-        <p>If you didn't request this, you can safely ignore this email.</p>
-    `,
+    <div style="font-family: 'Inter', Helvetica, Arial, sans-serif; background-color: #f9fafb; padding: 40px 20px; color: #111827;">
+      <div style="margin: 0 auto; background-color: #ffffff; border-radius: 16px; padding: 40px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); text-align: center; max-width: 500px;">
+          <h1 style="font-size: 24px; font-weight: 700; margin-bottom: 16px; color: #000;">Verify your email</h1>
+          <p style="font-size: 16px; color: #4b5563; margin-bottom: 32px; line-height: 1.5;">Welcome to NoteNest! Please confirm your email address to get started.</p>
+          <a href="${verifyUrl}" style="display: inline-block; padding: 12px 32px; background-color: #000000; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; letter-spacing: 0.5px;">Verify Email</a>
+          <p style="font-size: 14px; color: #9ca3af; margin-top: 32px; margin-bottom: 0;">This link will expire in 15 minutes.</p>
+          <p style="font-size: 12px; color: #9ca3af; margin-top: 8px;">If you didn't create an account, you can safely ignore this email.</p>
+      </div>
+    </div>
+    `
   );
 
   return res
@@ -325,11 +333,18 @@ const forgotPassword = asyncHandler(async (req, res) => {
 
   await sendEmail(
     user.email,
-    "Password Reset",
+    "Reset your NoteNest Password",
     `
-        <p>Click here to reset your password:</p>
-        <p><a href="${resetUrl}"> ${resetUrl}</a></p>
-        `,
+    <div style="font-family: 'Inter', Helvetica, Arial, sans-serif; background-color: #f9fafb; padding: 40px 20px; color: #111827;">
+      <div style="margin: 0 auto; background-color: #ffffff; border-radius: 16px; padding: 40px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); text-align: center; max-width: 500px;">
+          <h1 style="font-size: 24px; font-weight: 700; margin-bottom: 16px; color: #000;">Reset your password</h1>
+          <p style="font-size: 16px; color: #4b5563; margin-bottom: 32px; line-height: 1.5;">We received a request to reset your NoteNest password. Click the button below to choose a new one.</p>
+          <a href="${resetUrl}" style="display: inline-block; padding: 12px 32px; background-color: #000000; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; letter-spacing: 0.5px;">Reset Password</a>
+          <p style="font-size: 14px; color: #9ca3af; margin-top: 32px; margin-bottom: 0;">This link will expire in 15 minutes.</p>
+          <p style="font-size: 12px; color: #9ca3af; margin-top: 8px;">If you didn't request a password reset, you can safely ignore this email.</p>
+      </div>
+    </div>
+    `
   );
 
   return res
