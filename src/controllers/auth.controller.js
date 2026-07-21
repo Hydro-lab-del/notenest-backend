@@ -13,7 +13,7 @@ const isProd = process.env.NODE_ENV === "production";
 const options = {
   httpOnly: true,
   secure: isProd,
-  sameSite: isProd ? "none" : "lax",
+  sameSite: "lax",
   path: "/",
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };
